@@ -20,7 +20,11 @@ class Article(object):
         authors = authors.strip()
         self.authors = authors
 
-        self.group = re.findall('\[([^]]*)\]', title)[0]
+        title_cut = re.findall('\[([^]]*)\]', title)
+        if len(title_cut) == 0:
+            self.group = re.findall('\(([^]]*)\)',title)[0]
+        else:
+            self.group = title_cut[0]
         
         linkspl = link.split('/')
         self.pdflink = 'http://arxiv.org/pdf/' + linkspl[-1]
@@ -77,4 +81,4 @@ if __name__ == '__main__':
     #print_titles(artList, 'CO')
     my_keywords = ['black hole','galactic center', 'eccentric disk']
 
-    print find_in_abstracts(artList,my_keywords)
+    #print find_in_abstracts(artList,my_keywords)
