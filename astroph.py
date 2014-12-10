@@ -1,6 +1,8 @@
 import urllib
 import xml.etree.ElementTree as ET
 import re
+import smtplib
+import sys
 
 class Article(object):
 
@@ -72,13 +74,60 @@ def find_in_abstracts(artList, s):
 
     return matched_articles
 
+
+def send_email(recipient, body):
+
+    SMTP_SERVER = 'smtp.gmail.com'
+    SMTP_PORT = 587
+
+    sender='astroph.bot@gmail.com'
+    pwd='maxwellmeyer'
+
+    subject = 'astro-ph ALERT'
+
+    body = ""+body+""
+ 
+    headers = ["From: " + sender,
+           "Subject: " + subject,
+           "To: " + recipient,
+           "MIME-Version: 1.0",
+           "Content-Type: text/plain"]
+    headers = "\r\n".join(headers)
+    session = smtplib.SMTP(SMTP_SERVER,SMTP_PORT)
+ 
+    session.ehlo()
+    session.starttls()
+    session.ehlo
+    session.login(sender, pwd)
+
+    session.sendmail(sender, recipient, headers + "\r\n\r\n" + body)
+
+    session.quit()
+
+    return
+
 ################################################
 if __name__ == '__main__':
 
     artList = get_artlist()
+    my_keywords = ['IMF','Initial Mass Function', 'Mass Function']
 
-    #print_titles(artList, 'GA')
-    #print_titles(artList, 'CO')
-    my_keywords = ['black hole','galactic center', 'eccentric disk']
+    test=find_in_abstracts(artList,my_keywords)
 
-    #print find_in_abstracts(artList,my_keywords)
+    ct=0
+    body ="astroph-bot has searched the abstracts from today's astro-ph rss feed for the following keywords:"+"\r\n"+",".join(my_keywords)+"\r\n\r\n"
+    for n,key in enumerate(test.keys()):
+            if len(test[key]) > 0:
+                ct = ct + len(test[key])
+                body = body + "\r\n".join((["The following articles have the keyword: "\
+                    +key+"\r\n","\r\n".join([artList[x].title + artList[x].link for x in test[key]])]))\
+                    + "\r\n\r\n"
+
+    if ct > 0: 
+        #send_email(str(sys.argv[1]),body)
+        send_email('meyer@astro.utoronto.ca',body)
+
+
+
+
+
