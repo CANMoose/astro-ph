@@ -5,6 +5,8 @@ import smtplib
 import sys
 
 class Article(object):
+'''Produces an article object so you can easily access an article's title, abstract
+authros, regular link, and pdf link'''
 
     def __init__(self, title,link,abstract,authors):
 
@@ -32,6 +34,9 @@ class Article(object):
         self.pdflink = 'http://arxiv.org/pdf/' + linkspl[-1]
 
 def get_artlist():
+    '''Produces a list of article objects from the most recent (i.e. today's) astro-ph 
+    postings.'''
+
     url = 'http://export.arxiv.org/rss/astro-ph'
 
     data = urllib.urlopen(url).read()
