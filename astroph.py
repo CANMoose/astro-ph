@@ -5,8 +5,8 @@ import smtplib
 import sys
 
 class Article(object):
-'''Produces an article object so you can easily access an article's title, abstract
-authros, regular link, and pdf link'''
+    '''Produces an article object so you can easily access an article's title, abstract
+    authros, regular link, and pdf link'''
 
     def __init__(self, title,link,abstract,authors):
 
@@ -120,13 +120,16 @@ if __name__ == '__main__':
     test=find_in_abstracts(artList,my_keywords)
 
     ct=0
-    body ="astroph-bot has searched the abstracts from today's astro-ph rss feed for the following keywords:"+"\r\n"+",".join(my_keywords)+"\r\n\r\n"
+    body ="astroph-bot has searched the abstracts from today's astro-ph rss "+\
+        +"feed for the following keywords:"+"\r\n"+",".join(my_keywords)+\
+        "\r\n\r\n"
+
     for n,key in enumerate(test.keys()):
             if len(test[key]) > 0:
                 ct = ct + len(test[key])
-                body = body + "\r\n".join((["The following articles have the keyword: "\
-                    +key+"\r\n","\r\n".join([artList[x].title + artList[x].link for x in test[key]])]))\
-                    + "\r\n\r\n"
+                body = body + "\r\n".join((["The following articles have the"+\
+                    " keyword: "+key+"\r\n","\r\n".join([artList[x].title + \
+                    artList[x].link for x in test[key]])])) + "\r\n\r\n"
 
     if ct > 0: 
         #send_email(str(sys.argv[1]),body)
