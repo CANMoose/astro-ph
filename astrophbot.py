@@ -1,10 +1,10 @@
 import astroph as aph
 import sys
 
-def create_email(my_keywords,email,verbose=False):
+def create_email(my_keywords,verbose=False):
     
     if verbose:
-        print "Running astrophbot for %s\n" % (email)
+        print "Running astrophbot...\n"
         print "Checking arxiv...\n"
     
     artList = aph.get_artlist()
@@ -20,28 +20,32 @@ def create_email(my_keywords,email,verbose=False):
     
     #Starting email
     ct=0
-    body ="astroph-bot has searched the abstracts from today's astro-ph "+\
+    body ="<html><body>astroph-bot has searched the abstracts from today's astro-ph "+\
         "rss feed for the following keywords:"\
         +"\r\n"+",".join(my_keywords)+"\r\n\r\n"
     
     no_cw = 0
+    n_matches = 0
     #Building email
     for n,key in enumerate(kwdict.keys()):
             if len(kwdict[key]) > 0:
                 ct = ct + len(kwdict[key])
-                body = body + "\r\n".join((["The following articles have "+\
-                    "the keyword: "+key+"\r\n","\r\n".join([artList[x].title
-                    + artList[x].link for x in kwdict[key]])])) + "\r\n\r\n"
+                body = body + "\r\n".join((["<b>The following articles have "+\
+                    "the keyword: "+key+"</b>\r\n","\r\n".join([artList[x].title
+                    + artList[x].link + '\r\n' + artList[x].abstract + '\r\n' for x in kwdict[key]])])) + "\r\n\r\n"
                 no_cw = 1 
+                n_matches += len(kwdict[key])
     
     if not no_cw:
         body = body + 'There were no matches to your keywords today...\r\n'
 
     if verbose:
-        print "Sending email to %s...\n" % (email)
+        print "Sending email...\n"
+
+    body += '</body></html>'
     
     #send_email(str(sys.argv[1]),body)
-    aph.send_email(email,body)
+    aph.send_email(body, n_matches)
 
 if __name__ == '__main__':
 
@@ -52,4 +56,4 @@ if __name__ == '__main__':
     
     print "Sending astro-ph email..."
 
-    create_email(keywords,email)
+    create_email(keywords)

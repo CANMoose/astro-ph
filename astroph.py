@@ -80,15 +80,23 @@ def find_in_abstracts(artList, s):
     return matched_articles
 
 
-def send_email(recipient, body):
+def send_email(body, n_matches):
 
     SMTP_SERVER = 'smtp.gmail.com'
     SMTP_PORT = 587
 
-    sender='astroph.bot@gmail.com'
-    pwd='maxwellmeyer'
+    infofl = open('/home/pi/astrophinfo.txt','r')
+    lines = infofl.readlines()
 
-    subject = 'astro-ph ALERT'
+    sender = 'astroph.bot@gmail.com'
+    pwd = lines[0][:-1]
+    recipient = lines[1][:-1]
+
+    if n_matches == 0:
+        subject = 'astro-ph ALERT - NO MATCHES'
+    else:
+        subject = 'astro-ph ALERT'
+
 
     body = ""+body+""
  
@@ -97,6 +105,7 @@ def send_email(recipient, body):
            "To: " + recipient,
            "MIME-Version: 1.0",
            "Content-Type: text/plain"]
+
     headers = "\r\n".join(headers)
     session = smtplib.SMTP(SMTP_SERVER,SMTP_PORT)
  
