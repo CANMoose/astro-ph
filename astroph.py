@@ -1,4 +1,4 @@
-import urllib
+from urllib import request
 import xml.etree.ElementTree as ET
 import re
 import sys
@@ -38,7 +38,7 @@ def get_artlist():
 
     url = 'http://export.arxiv.org/rss/astro-ph'
 
-    data = urllib.urlopen(url).read()
+    data = request.urlopen(url).read()
     root = ET.fromstring(data)
 
     artList = []
@@ -57,7 +57,12 @@ def find_in_abstracts(artList, s):
     dictionary matching the keywords and the matched article number'''
 
     matched_articles = {}
+
+    #Make entry for each keyword into dict
     for keyword in s: matched_articles[keyword] = []
+
+    #For each article, determine if it contains the keyword. If so, add the 
+    #reference # (n) to the dict. 
     for n,art in enumerate(artList):
         for keyword in s:
             if keyword.lower() in art.abstract.lower() and n not in matched_articles[keyword]:
