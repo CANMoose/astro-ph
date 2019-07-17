@@ -1,5 +1,6 @@
 import astroph as aph
 import sys
+import smtplib
 
 def create_email(my_keywords,verbose=False):
     
@@ -45,7 +46,47 @@ def create_email(my_keywords,verbose=False):
     body += '</body></html>'
     
     #send_email(str(sys.argv[1]),body)
-    aph.send_email(body, n_matches)
+    send_email(body, n_matches)
+
+def send_email(body, n_matches):
+
+    SMTP_SERVER = 'smtp.gmail.com'
+    SMTP_PORT = 587
+
+    infofl = open('/home/pi/astrophinfo.txt','r')
+    lines = infofl.readlines()
+
+    sender = 'astroph.bot@gmail.com'
+    pwd = lines[0][:-1]
+    recipient = lines[1][:-1]
+
+    if n_matches == 0:
+        subject = 'astro-ph ALERT - NO MATCHES'
+    else:
+        subject = 'astro-ph ALERT'
+
+
+    body = ""+body+""
+ 
+    headers = ["From: " + sender,
+           "Subject: " + subject,
+           "To: " + recipient,
+           "MIME-Version: 1.0",
+           "Content-Type: text/plain"]
+
+    headers = "\r\n".join(headers)
+    session = smtplib.SMTP(SMTP_SERVER,SMTP_PORT)
+ 
+    session.ehlo()
+    session.starttls()
+    session.ehlo
+    session.login(sender, pwd)
+
+    session.sendmail(sender, recipient, headers + "\r\n\r\n" + body)
+
+    session.quit()
+
+    return
 
 if __name__ == '__main__':
 
